@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Last-Mile Delivery Optimizer - Walmart</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__brand">
+                    <div class="walmart-logo">
+                        <i class="fas fa-store"></i>
+                        <span>Walmart</span>
+                    </div>
+                    <h1 class="header__title">AI-Powered Last-Mile Delivery Optimizer</h1>
+                </div>
+                <div class="header__info">
+                    <div class="header__metrics">
+                        <div class="metric">
+                            <span class="metric__label">Total Orders</span>
+                            <span class="metric__value" id="totalOrders">0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric__label">Status</span>
+                            <span class="metric__value status status--success" id="optimizationStatus">Ready</span>
+                        </div>
+                    </div>
+                    <div class="header__datetime">
+                        <i class="fas fa-clock"></i>
+                        <span id="currentDateTime">Tuesday, July 01, 2025, 9:01 PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <div class="container">
+            <div class="dashboard__layout">
+                <!-- Input Section -->
+                <section class="dashboard__section">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2><i class="fas fa-plus-circle"></i> Order Management</h2>
+                        </div>
+                        <div class="card__body">
+                            <form id="orderForm" class="order-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="orderId">Order ID</label>
+                                        <input type="text" id="orderId" class="form-control" placeholder="WM001" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="customerAddress">Customer Address</label>
+                                        <input type="text" id="customerAddress" class="form-control" placeholder="Enter delivery address" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="priority">Priority Level</label>
+                                        <select id="priority" class="form-control" required>
+                                            <option value="">Select Priority</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="deliveryWindow">Delivery Window</label>
+                                        <input type="text" id="deliveryWindow" class="form-control" placeholder="09:00-11:00" required>
+                                    </div>
+                                    <div class="form-group form-group--full">
+                                        <label class="form-label" for="specialInstructions">Special Instructions</label>
+                                        <input type="text" id="specialInstructions" class="form-control" placeholder="Call before delivery">
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn--primary">
+                                        <i class="fas fa-plus"></i> Add Order
+                                    </button>
+                                    <button type="button" id="loadSampleBtn" class="btn btn--secondary">
+                                        <i class="fas fa-download"></i> Load Sample Orders
+                                    </button>
+                                    <button type="button" id="optimizeBtn" class="btn btn--primary btn-optimize">
+                                        <i class="fas fa-route"></i> Optimize Routes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Map and Analytics Layout -->
+                <div class="dashboard__main-content">
+                    <!-- Interactive Map Section -->
+                    <section class="dashboard__section dashboard__section--map">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2><i class="fas fa-map-marked-alt"></i> Delivery Route Map</h2>
+                                <div class="map-controls">
+                                    <button id="simulateRoadblockBtn" class="btn btn--outline btn--sm">
+                                        <i class="fas fa-exclamation-triangle"></i> Simulate Roadblock
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <div id="map" class="map-container"></div>
+                                <div class="map-legend">
+                                    <div class="legend-item">
+                                        <span class="legend-marker legend-marker--warehouse"></span>
+                                        <span>Warehouse</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-marker legend-marker--on-time"></span>
+                                        <span>On-time</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-marker legend-marker--delay-risk"></span>
+                                        <span>Delay Risk</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-marker legend-marker--high-priority"></span>
+                                        <span>High Priority</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Analytics Panel -->
+                    <section class="dashboard__section dashboard__section--analytics">
+                        <div class="card">
+                            <div class="card__header">
+                                <h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+                            </div>
+                            <div class="card__body">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">Cost Savings</span>
+                                            <span class="metric-card__value" id="costSavings">₹0</span>
+                                            <span class="metric-card__change metric-card__change--positive" id="costSavingsChange">+0%</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-gas-pump"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">Fuel Efficiency</span>
+                                            <span class="metric-card__value" id="fuelEfficiency">0%</span>
+                                            <span class="metric-card__change metric-card__change--positive" id="fuelChange">saved</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">Avg Delivery Time</span>
+                                            <span class="metric-card__value" id="avgDeliveryTime">0 min</span>
+                                            <span class="metric-card__change metric-card__change--positive" id="timeChange">-0 min</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">Success Rate</span>
+                                            <span class="metric-card__value" id="successRate">0%</span>
+                                            <span class="metric-card__change metric-card__change--positive" id="successChange">+0%</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">At-Risk Orders</span>
+                                            <span class="metric-card__value" id="atRiskOrders">0</span>
+                                            <span class="metric-card__change" id="riskChange">orders</span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-card__icon">
+                                            <i class="fas fa-calendar-month"></i>
+                                        </div>
+                                        <div class="metric-card__content">
+                                            <span class="metric-card__label">Monthly Savings</span>
+                                            <span class="metric-card__value" id="monthlySavings">₹0</span>
+                                            <span class="metric-card__change metric-card__change--positive">projected</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Orders Table -->
+                <section class="dashboard__section dashboard__section--full">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2><i class="fas fa-list"></i> Order Management Table</h2>
+                            <div class="table-controls">
+                                <button id="reOptimizeBtn" class="btn btn--outline btn--sm">
+                                    <i class="fas fa-sync"></i> Re-optimize
+                                </button>
+                                <button id="exportBtn" class="btn btn--outline btn--sm">
+                                    <i class="fas fa-download"></i> Export Report
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div class="table-container">
+                                <table class="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-sort="id">Order ID <i class="fas fa-sort"></i></th>
+                                            <th data-sort="address">Address <i class="fas fa-sort"></i></th>
+                                            <th data-sort="eta">ETA <i class="fas fa-sort"></i></th>
+                                            <th data-sort="risk">Risk Status <i class="fas fa-sort"></i></th>
+                                            <th data-sort="priority">Priority <i class="fas fa-sort"></i></th>
+                                            <th data-sort="fuel">Fuel Est. (₹) <i class="fas fa-sort"></i></th>
+                                            <th data-sort="status">Status <i class="fas fa-sort"></i></th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody">
+                                        <tr class="empty-state">
+                                            <td colspan="8">
+                                                <div class="empty-state__content">
+                                                    <i class="fas fa-inbox"></i>
+                                                    <p>No orders loaded. Click "Load Sample Orders" to get started.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Control Panel -->
+                <section class="dashboard__section">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2><i class="fas fa-sliders-h"></i> Control Panel</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="control-grid">
+                                <div class="control-group">
+                                    <label class="form-label">Traffic Conditions</label>
+                                    <select id="trafficCondition" class="form-control">
+                                        <option value="normal">Normal</option>
+                                        <option value="heavy">Heavy Traffic</option>
+                                        <option value="emergency">Emergency</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label class="form-label">Weather Impact</label>
+                                    <div class="control-group">
+                                        <label class="form-label">Weather Impact</label>
+                                        <input id="weatherImpact" class="form-control" type="text" disabled placeholder="Loading weather..." />
+                                      </div>
+                                      
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+    <script src="map.js"></script>
+<script src="control.js"></script>
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&callback=initMap">
+</script>
+
+</body>
+</html>
